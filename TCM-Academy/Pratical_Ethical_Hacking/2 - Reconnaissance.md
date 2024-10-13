@@ -70,3 +70,101 @@ Once email addresses are gathered, they can be verified for validity using onlin
 Do not underestimate recovery methods (such as account recovery options) to gather additional information related to email addresses.
 
 ![Recovery Methods](./Image/5.png)
+
+## Huntig Breached Credentials with DeHashed
+
+![Recovery Methods](./Image/6.png)
+
+## Hunting for Subdomains
+
+To discover subdomains, we can use various tools and services. Below are two effective methods: using **Sublist3r** and **crt.sh**.
+
+### 1. Using Sublist3r
+
+**Sublist3r** is a popular tool for enumerating subdomains. It helps security researchers and penetration testers find valid subdomains for a given domain through OSINT.
+
+#### Installation on Debian
+
+To install Sublist3r on a Debian-based machine, simply run the following command:
+
+```bash
+sudo apt install sublist3r
+```
+
+#### Usage
+
+Once installed, you can use Sublist3r by specifying the target domain. For example, to enumerate subdomains of `tesla.com`, execute the command:
+
+```bash
+sublist3r -d tesla.com
+```
+
+This will output a list of subdomains associated with the target domain, helping you identify potential entry points.
+
+![Sublist3r Example](./Image/8.png)
+
+### 2. Using crt.sh
+
+Another method to find subdomains is by leveraging **crt.sh**, a web-based tool that queries certificate transparency logs. It provides information on domains that have SSL/TLS certificates issued, which often include subdomains.
+
+#### How to Use crt.sh
+
+1. Visit the website: [crt.sh](https://crt.sh)
+2. Enter the domain name you are investigating (e.g., `tesla.com`).
+3. The results will display all certificates associated with the domain, including wildcard certificates like `*.tesla.com`.
+
+This approach reveals subdomains based on publicly available certificates, giving you insight into secured subdomains that are not easily discoverable via DNS records.
+
+![crt.sh Example](./Image/9.png)
+
+### Key Difference
+
+- **Sublist3r** scans multiple sources (such as DNS records and search engines) to discover subdomains. 
+
+- **crt.sh** specifically looks for subdomains based on SSL certificates, giving you additional visibility into domains that have certificates issued but may not be indexed by search engines.
+
+Both methods complement each other and provide a thorough approach to subdomain enumeration.
+
+### 3. Using OWASP Amass
+
+**OWASP Amass** is another powerful tool for subdomain enumeration. It uses advanced techniques to gather information from a wide range of sources, including DNS, public databases, and web archives, providing a more thorough subdomain discovery process.
+
+#### Running Amass with Docker
+
+The easiest way to get Amass running is through Docker. Here’s how you can use it to hunt for subdomains of `tesla.com`:
+
+```bash
+docker build -t amass https://github.com/owasp-amass/amass.git
+docker run -v OUTPUT_DIR_PATH:/.config/amass/ amass enum --list
+docker run -v OUTPUT_DIR_PATH:/.config/amass/ amass enum -d tesla.com
+```
+
+This command will launch Amass and begin collecting subdomain data, saving the output to the specified directory.
+
+As shown in the image below, Amass gathers a vast amount of information, revealing subdomains, DNS records, and related metadata that can help identify potential attack vectors.
+
+![Amass Example](./Image/10.png)
+
+### Checking if Domains are Alive
+
+Once you've enumerated subdomains, it's essential to verify which ones are actively responding. For this, we can use **HttpProbe**, a simple yet effective tool that checks if a domain or subdomain is alive by probing for active HTTP/HTTPS services.
+
+#### Installation
+
+To install **HttpProbe**, you need to have Go installed on your system. Then, run the following command:
+
+```bash
+go install github.com/tomnomnom/httprobe@latest
+```
+
+#### Usage
+
+All you need is a file containing a list of domains or subdomains. You can pipe this list into **HttpProbe** to check which ones are alive. For example:
+
+```bash
+cat subdomains.txt | httprobe
+```
+
+This will check each domain in `subdomains.txt` and return only the ones that are responding to HTTP/HTTPS requests, allowing you to focus on live targets.
+
+
