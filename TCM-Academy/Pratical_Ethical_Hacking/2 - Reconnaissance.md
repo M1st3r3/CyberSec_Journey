@@ -1,5 +1,43 @@
 # Reconnaissance
 
+Here’s a structured menu for your document based on the H2 headings:
+
+# Reconnaissance
+
+---
+
+## Table of Contents
+1. [Passive Reconnaissance Overview](#passive-reconnaissance-overview)
+   - [Web/Host](#webhost)
+     - [Target Validation](#target-validation)
+     - [Finding Subdomains](#finding-subdomains)
+     - [Fingerprinting](#fingerprinting)
+     - [Data Breaches](#data-breaches)
+2. [Discovering Email Addresses](#discovering-email-addresses)
+   - [Finding Emails by Company](#finding-emails-by-company)
+   - [Verifying Email Addresses](#verifying-email-addresses)
+   - [Using Recovery Methods](#using-recovery-methods)
+3. [Hunting Breached Credentials with DeHashed](#hunting-breached-credentials-with-dehashed)
+4. [Hunting for Subdomains](#hunting-for-subdomains)
+   - [Using Sublist3r](#using-sublist3r)
+   - [Using crt.sh](#using-crtsh)
+   - [Key Difference](#key-difference)
+   - [Using OWASP Amass](#using-owasp-amass)
+   - [Checking if Domains are Alive](#checking-if-domains-are-alive)
+5. [Identifying Website Technologies](#identifying-website-technologies)
+   - [Using BuiltWith](#using-builtwith)
+   - [Using Wappalyzer](#using-wappalyzer)
+   - [Using WhatWeb in the Terminal](#using-whatweb-in-the-terminal)
+6. [Information Gathering with Burp Suite](#information-gathering-with-burp-suite)
+   - [Intercepting Traffic](#intercepting-traffic)
+7. [Google Fu](#google-fu)
+
+---
+
+> "The more I read, the more I acquire, the more certain I am that I know nothing." — Voltaire, 1778
+
+---
+
 ## Passive Reconnaissance Overview
 Passive reconnaissance involves gathering information about the target without directly interacting with it, using publicly available data.
 
@@ -167,4 +205,96 @@ cat subdomains.txt | httprobe
 
 This will check each domain in `subdomains.txt` and return only the ones that are responding to HTTP/HTTPS requests, allowing you to focus on live targets.
 
+## Identifying Website Technologies
+
+For this we can use https://builtwith.com/
+
+![Amass Example](./Image/11.png)
+
+Another way is to use wappalyzer
+
+![Amass Example](./Image/12.png)
+
+One way to do it with the terminal is ```whatweb```
+
+![Amass Example](./Image/13.png)
+
+## Identifying Website Technologies
+
+Understanding the technologies used by a website can provide valuable insights for security assessments and penetration testing. Here are a few tools and methods to identify website technologies:
+
+### 1. Using BuiltWith
+
+**BuiltWith** is a web-based service that analyzes websites and identifies the various technologies used, including server software, analytics tools, and frameworks. You can access it at [builtwith.com](https://builtwith.com/).
+
+![BuiltWith Example](./Image/11.png)
+
+### 2. Using Wappalyzer
+
+**Wappalyzer** is another powerful tool that detects web technologies. It provides a browser extension as well as a web interface to analyze sites for the technologies they use.
+
+![Wappalyzer Example](./Image/12.png)
+
+### 3. Using WhatWeb in the Terminal
+
+For those who prefer command-line tools, **WhatWeb** is an excellent option. It is a flexible and powerful tool that identifies various technologies used on websites.
+
+To use WhatWeb, simply run the following command:
+
+```bash
+whatweb <target-website>
+```
+
+This will output a list of technologies detected on the specified website, allowing for quick reconnaissance.
+
+![WhatWeb Example](./Image/13.png)
+
+Here’s an improved version of your section on information gathering with Burp Suite:
+
+## Information Gathering with Burp Suite
+
+**Burp Suite** is a powerful tool for web application security testing. One of its key features is the ability to intercept and analyze HTTP/S traffic, which can provide valuable information about the application being tested.
+
+### Intercepting Traffic
+
+When intercepting traffic with Burp Suite, you can gain insights from the responses sent by the server. This includes information such as:
+
+- **HTTP Status Codes**: Indicates the success or failure of requests.
+- **Response Headers**: Provides details about the server, content types, and security policies.
+- **Cookies**: Displays session management and authentication mechanisms.
+- **Content**: Reveals HTML, JavaScript, and other resources that can inform testing strategies.
+
+Analyzing this information helps you understand the application's architecture, potential vulnerabilities, and areas for further testing.
+
+![Burp Suite Example](./Image/14.png)
+
+## Google Fu
+
+**Google Fu** refers to the art of using advanced search techniques and operators to gather information efficiently from Google. Mastering these search operators can significantly enhance your reconnaissance efforts by allowing you to find specific information that may not be easily accessible through standard searches.
+
+### Key Search Operators
+
+1. **`site:`** - Restricts results to a specific domain.  
+   Example: `site:example.com` - This will only show results from the specified domain.
+
+2. **`inurl:`** - Searches for specific text within the URL.  
+   Example: `inurl:login` - Finds URLs that contain "login."
+
+3. **`intitle:`** - Finds pages with specific words in the title.  
+   Example: `intitle:"admin panel"` - Returns pages with "admin panel" in the title.
+
+4. **`filetype:`** - Searches for specific file types.  
+   Example: `filetype:pdf` - Finds PDF documents related to the search term.
+
+5. **`-` (minus sign)** - Excludes terms from the search.  
+   Example: `apple -fruit` - Searches for "apple" but excludes any results related to fruit.
+
+6. **`*` (asterisk)** - Acts as a wildcard to fill in unknown terms.  
+   Example: `best * for hacking` - Finds results related to the best tools or resources for hacking.
+
+### Additional Resources
+
+For a comprehensive guide on Google’s advanced search operators, check out this cheat sheet: [Google Advanced Search Operators](https://ahrefs.com/blog/google-advanced-search-operators/).
+
+By utilizing these operators effectively, you can uncover a wealth of information that can aid in your reconnaissance efforts.
 
