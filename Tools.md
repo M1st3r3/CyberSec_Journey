@@ -24,3 +24,5 @@
 - **SearchSploit**: An offline search tool for ExploitDB, enabling the identification of available exploits for known vulnerabilities.
 
 - **Netcat (nc)**: A versatile networking utility used for port listening, making connections, and data transfer, often used in reverse shell setups.
+
+- **fcrackzip**: A powerful command-line utility designed for cracking password-protected ZIP files.
