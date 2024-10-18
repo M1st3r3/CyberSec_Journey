@@ -1,0 +1,8 @@
+phpinfo -> 172.16.137.132:8080 : Apache/2.4.38
+
+Bolt - Installation error -> 172.16.137.132
+
+111/tcp   open  rpcbind  2-4 (RPC #100000)
+
+2049/tcp  open  nfs      3-4 (RPC #100003)
+
