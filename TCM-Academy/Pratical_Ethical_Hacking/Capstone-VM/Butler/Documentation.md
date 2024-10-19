@@ -4,6 +4,9 @@
 
 Using Burp Suite, we performed a brute force attack on the Jenkins webpage and successfully found the credentials: 
 
+```bash
+jenkins:jenkins
+```
 
 ## Script Console Access
 
