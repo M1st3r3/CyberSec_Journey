@@ -1,0 +1,14 @@
+PORT      STATE SERVICE
+135/tcp   open  msrpc
+139/tcp   open  netbios-ssn
+445/tcp   open  microsoft-ds
+5040/tcp  open  unknown
+7680/tcp  open  pando-pub
+8080/tcp  open  http-proxy
+49664/tcp open  unknown
+49665/tcp open  unknown
+49666/tcp open  unknown
+49667/tcp open  unknown
+49668/tcp open  unknown
+49669/tcp open  unknown
+MAC Address: 00:0C:29:E8:92:F3 (VMware)

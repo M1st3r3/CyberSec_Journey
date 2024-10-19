@@ -1,0 +1,8 @@
+There is a jenkins install on port 8080 with http-robots.txt: 1 disallowed entry 
+
+smb_version scan
+msf6 auxiliary(scanner/smb/smb_version) > run
+
+[*] 172.16.137.133:445    - SMB Detected (versions:2, 3) (preferred dialect:SMB 3.1.1) (compression capabilities:LZNT1) (encryption capabilities:AES-128-GCM) (signatures:optional) (guid:{2ce29ff3-1497-4ce6-a5af-1fe31449d52a}) (authentication domain:BUTLER)
+[*] 172.16.137.133:       - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed

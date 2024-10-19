@@ -26,3 +26,10 @@
 - **Netcat (nc)**: A versatile networking utility used for port listening, making connections, and data transfer, often used in reverse shell setups.
 
 - **fcrackzip**: A powerful command-line utility designed for cracking password-protected ZIP files.
+
+- **certutil.exe**: A built-in Windows command-line utility used for downloading files and managing certificates, often employed for retrieving files in penetration testing scenarios.
+
+- **winpeas**: A Windows privilege escalation enumeration script, similar to linpeas, designed to identify potential security weaknesses and misconfigurations that could be exploited for elevated access.
+
+- **msfvenom**: A dynamic payload generator included in the Metasploit Framework, utilized for creating customized reverse shells and other payloads tailored for specific targets and attack vectors.
+

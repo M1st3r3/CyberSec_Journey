@@ -1,0 +1,43 @@
+PORT      STATE SERVICE       VERSION
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds?
+5040/tcp  open  unknown
+7680/tcp  open  pando-pub?
+8080/tcp  open  http          Jetty 9.4.41.v20210516
+| http-robots.txt: 1 disallowed entry 
+|_/
+|_http-server-header: Jetty(9.4.41.v20210516)
+|_http-title: Site doesn't have a title (text/html;charset=utf-8).
+49664/tcp open  msrpc         Microsoft Windows RPC
+49665/tcp open  msrpc         Microsoft Windows RPC
+49666/tcp open  msrpc         Microsoft Windows RPC
+49667/tcp open  msrpc         Microsoft Windows RPC
+49668/tcp open  msrpc         Microsoft Windows RPC
+49669/tcp open  msrpc         Microsoft Windows RPC
+MAC Address: 00:0C:29:E8:92:F3 (VMware)
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: general purpose
+Running (JUST GUESSING): Microsoft Windows 10|2019|Longhorn|7|2008|Vista|11|8.1|XP (98%)
+OS CPE: cpe:/o:microsoft:windows_10 cpe:/o:microsoft:windows cpe:/o:microsoft:windows_7::sp1 cpe:/o:microsoft:windows_server_2008:r2 cpe:/o:microsoft:windows_8 cpe:/o:microsoft:windows_vista::sp1 cpe:/o:microsoft:windows_8.1 cpe:/o:microsoft:windows_xp::sp3
+Aggressive OS guesses: Microsoft Windows 10 1709 - 1909 (98%), Microsoft Windows Server 2019 (96%), Microsoft Windows 10 1709 - 1803 (96%), Microsoft Windows Longhorn (94%), Microsoft Windows 10 2004 (93%), Microsoft Windows 7 SP1 (93%), Microsoft Windows 10 1703 (93%), Microsoft Windows Server 2008 R2 (92%), Microsoft Windows 8 (92%), Microsoft Windows Vista SP1 (92%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 1 hop
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2024-10-19T05:23:18
+|_  start_date: N/A
+|_clock-skew: 3h59m58s
+|_nbstat: NetBIOS name: BUTLER, NetBIOS user: <unknown>, NetBIOS MAC: 00:0c:29:e8:92:f3 (VMware)
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   0.35 ms 172.16.137.133
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 175.25 seconds
