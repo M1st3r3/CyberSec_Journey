@@ -33,3 +33,7 @@
 
 - **msfvenom**: A dynamic payload generator included in the Metasploit Framework, utilized for creating customized reverse shells and other payloads tailored for specific targets and attack vectors.
 
+- **dnsrecon**: A DNS enumeration tool that helps gather DNS records, perform zone transfers, and brute-force subdomains.
+
+- **GTFOBins**: A curated list of Unix binaries that can be exploited by attackers to bypass local security restrictions, often used for privilege escalation or executing commands.
+

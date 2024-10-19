@@ -1,0 +1,9 @@
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-10-19 12:35 EDT
+Nmap scan report for 172.16.137.134
+Host is up (0.00066s latency).
+Not shown: 65532 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+53/tcp open  domain
+80/tcp open  http
+MAC Address: 00:0C:29:83:C0:F4 (VMware)
