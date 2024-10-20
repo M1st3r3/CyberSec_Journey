@@ -37,3 +37,10 @@
 
 - **GTFOBins**: A curated list of Unix binaries that can be exploited by attackers to bypass local security restrictions, often used for privilege escalation or executing commands.
 
+- **LinEnum**: A bash script that performs a detailed enumeration of the system to find potential privilege escalation vectors.
+
+- **linux-exploit-suggester**: A tool that checks the system's kernel version and suggests applicable kernel exploits.
+
+- **linuxprivchecker.py**: A Python script that performs privilege escalation checks by analyzing system misconfigurations and security issues.
+
+
