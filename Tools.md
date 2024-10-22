@@ -43,4 +43,9 @@
 
 - **linuxprivchecker.py**: A Python script that performs privilege escalation checks by analyzing system misconfigurations and security issues.
 
+- **ltrace**: A debugging tool that tracks and displays the dynamic library calls made by a program, helping to identify issues like unprotected system calls or exploitable behaviors during execution.
+
+- **dirb**: A web content scanner that brute-forces directory and file names on web servers, helping to uncover hidden resources, configuration files, or vulnerabilities in web applications.
+
+- **wpscan**: A WordPress security scanner that identifies vulnerabilities such as weak passwords, outdated plugins, and exposed configuration files by enumerating users, plugins, and themes on WordPress sites.
 
