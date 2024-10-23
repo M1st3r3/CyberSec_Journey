@@ -49,3 +49,7 @@
 
 - **wpscan**: A WordPress security scanner that identifies vulnerabilities such as weak passwords, outdated plugins, and exposed configuration files by enumerating users, plugins, and themes on WordPress sites.
 
+- **strace**: A diagnostic tool that traces system calls and signals made by a program, helping to identify how a program interacts with the operating system, such as file access, network communication, and process creation.
+
+- **strings**: A utility that extracts and displays printable ASCII strings from binary files, making it useful for discovering hidden or hardcoded data like file paths, passwords, or function names within executables.
+

