@@ -1093,11 +1093,70 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
    ![Root Access via SUID](./Image/77.png)
 
-## Challenge 4
+## Challenge 4: TryHackMe - ConvertMyVideo
 
-** todo **
+**Link**: [TryHackMe Room - ConvertMyVideo](https://tryhackme.com/r/room/convertmyvideo)
 
-   ![Root Access via SUID](./Image/000.png)
+### 1. Scanning with Nmap
 
-tips on room 4 & 5 in video
+We begin by scanning the target IP `10.10.218.194` to identify open ports and services:
 
+```bash
+└─$ nmap -T4 -p 22,80 -A 10.10.218.194
+```
+
+#### Nmap Scan Results:
+
+- **Host**: 10.10.218.194
+- **Latency**: 0.83s
+
+| Port   | State | Service | Version                                   |
+|--------|-------|---------|-------------------------------------------|
+| 22/tcp | open  | ssh     | OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu) |
+| 80/tcp | open  | http    | Apache httpd 2.4.29 (Ubuntu)             |
+
+Additional Information:
+- **SSH Host Key**:  
+  - RSA: `65:1b:fc:74:10:39:df:dd:d0:2d:f0:53:1c:eb:6d:ec`
+  - ECDSA: `c4:28:04:a5:c3:b9:6a:95:5a:4d:7a:6e:46:e2:14:db`
+  - ED25519: `ba:07:bb:cd:42:4a:f2:93:d1:05:d0:b3:4c:b1:d9:b1`
+- **HTTP Title**: The site does not have a title (text/html; charset=UTF-8).
+- **OS**: Linux; **CPE**: `cpe:/o:linux:linux_kernel`
+
+### 2. Website Enumeration and Exploitation
+
+After running directory enumeration on the web server, we found an **`/admin`** folder that requires a password.
+
+Further analysis with **Burp Suite** revealed that the site is vulnerable to Remote Code Execution (RCE).
+
+   ![Burp Suite showing RCE vulnerability](./Image/79.png)
+
+### 3. Reverse Shell Access
+
+1. **Uploading Reverse Shell**:
+   - We uploaded a reverse shell script to the server and accessed it at `http://10.10.218.194/pshell.php` to execute it.
+
+   ![Uploaded Reverse Shell Executed](./Image/80.png)
+
+2. **Gaining Initial Shell Access**:
+   - Once executed, the reverse shell connected back to our listener, providing initial access to the server.
+
+   ![Initial Shell Access](./Image/81.png)
+
+### 4. Privilege Escalation
+
+Running **`pspy64`** on the target system showed that the root user periodically executes the script `/var/www/html/tmp/clean.sh`.
+
+   ![pspy64 Output Showing Root's Execution](./Image/82.png)
+
+To exploit this:
+
+1. **Modifying `clean.sh`**:
+   - We appended a reverse shell command to `clean.sh`.
+
+   ![Added Reverse Shell to clean.sh](./Image/83.png)
+
+2. **Root Shell Access**:
+   - When the root user next executed `clean.sh`, it triggered our reverse shell, granting root-level access.
+
+   ![Root Shell Access](./Image/84.png)
