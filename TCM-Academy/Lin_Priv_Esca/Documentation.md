@@ -1160,3 +1160,10 @@ To exploit this:
    - When the root user next executed `clean.sh`, it triggered our reverse shell, granting root-level access.
 
    ![Root Shell Access](./Image/84.png)
+
+## Challenge 5
+
+![Root Shell Access](./Image/000.png)
+
+
+saydrawnlyingpicture

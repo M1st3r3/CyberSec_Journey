@@ -54,3 +54,8 @@
 - **strings**: A utility that extracts and displays printable ASCII strings from binary files, making it useful for discovering hidden or hardcoded data like file paths, passwords, or function names within executables.
 
 - **wfuzz**: 
+
+Upgrade tty : ```python -c 'import pty; pty.spawn("/bin/bash")'``` + ```CTRL+Z``` + ```stty raw -echo``` + ```fg``` + ```fg``` + ```export TERM=xterm```
+
+
+
