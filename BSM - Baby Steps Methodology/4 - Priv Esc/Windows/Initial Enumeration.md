@@ -121,8 +121,6 @@ dir C:\ /ad /s /b | findstr "MyFolder"
 ```cmd
 where /R c:\ [file_name]
 ```
-
-
 # Automated Enumeration Tools
 
 ![[Pasted image 20241102184327.png]]

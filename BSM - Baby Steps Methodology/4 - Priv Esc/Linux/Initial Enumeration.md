@@ -108,6 +108,7 @@ To see open ports and connections, use:
 
 ```shell
 netstat -ano
+netstat -tnlp
 ```
 
 # Password Hunting
